@@ -2,7 +2,7 @@
 
 Make flask_app your working directory :
 ```bash
-cd .\flask_app\
+cd ./flask_app
 ```
 
 #Create and setup an python env
@@ -31,7 +31,8 @@ pip install -r requirements.txt
 ```
 # Create the database 
 
+Fill the flask_app/config.
+
 ```bash
-Fill the flask_app/config.json
 flask --app flaskr init-db        
 ```
