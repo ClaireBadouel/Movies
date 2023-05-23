@@ -2,7 +2,7 @@
     "DATABASE":{
         "DB_NAME" : "movies",
 
-        "DB_PATH" : "C:/Users/clair/Projets/ICM/flask_app/database/",
+        "DB_PATH" : "database/",
         "COLUMNS_DATABASE" : {
             "title":"str", 
             "description":"str", 
