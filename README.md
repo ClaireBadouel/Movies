@@ -1,5 +1,9 @@
 # Movies
 
+Make flask_app your working directory :
+
+cd my_path_to_flask_app\flask_app\
+
 #Create and setup an python env
 
 how to create the virtual environment: 
@@ -21,7 +25,6 @@ py -m venv env
 .\env\Scripts\activate
 
 When env activated, install requirement.txt :
-
 pip install -r requirements.txt
 
 # Create the database 
