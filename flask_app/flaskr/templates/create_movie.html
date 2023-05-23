@@ -1,0 +1,66 @@
+{% block content %}
+    <h1>{% block title %} Add a New Movie {% endblock %}</h1>
+    <form method="post">
+        <label for="title">Title</label>
+        <br>
+        <input type="text" name="title"
+               placeholder="Please enter here the title"
+               value="{{ request.form['title'] }}"></input>
+        <br>
+
+        <label for="description">Post description</label>
+        <br>
+        <textarea name="description"
+                  placeholder="Please enter here the description"
+                  rows="5"
+                  cols="200"
+                  >{{ request.form['description'] }}</textarea>
+        <br>
+
+        <label for="genres">Genres</label>
+        <br>
+            <input type="checkbox" name="genres" value="Action">Action<br>      
+            <input type="checkbox" name="genres" value="Adventure">Adventure<br>      
+            <input type="checkbox" name="genres" value="Animation">Animation<br>      
+            <input type="checkbox" name="genres" value="Comedy">Comedy<br>      
+            <input type="checkbox" name="genres" value="Crime">Crime<br>      
+            <input type="checkbox" name="genres" value="Documentary">Documentary<br>      
+            <input type="checkbox" name="genres" value="Drama">Drama<br>      
+            <input type="checkbox" name="genres" value="Family">Family<br>      
+            <input type="checkbox" name="genres" value="Fantasy">Fantasy<br>      
+            <input type="checkbox" name="genres" value="Foreign">Foreign<br>      
+            <input type="checkbox" name="genres" value="History">History<br>      
+            <input type="checkbox" name="genres" value="Music">Music<br>      
+            <input type="checkbox" name="genres" value="Mystery">Mystery<br>      
+            <input type="checkbox" name="genres" value="Romance">Romance<br>      
+            <input type="checkbox" name="genres" value="Science Fiction">Science Fiction<br>      
+            <input type="checkbox" name="genres" value="TV Movie">TV Movie<br>      
+            <input type="checkbox" name="genres" value="Thriller">Thriller<br>      
+            <input type="checkbox" name="genres" value="War">War<br>      
+            <input type="checkbox" name="genres" value="Western">Western<br>      
+        <br>
+        
+        <label for="release_date">release_date</label>
+        <br>
+        <input type="date" name="release_date"
+               placeholder="Post release_date"
+               value="{{ request.form['release_date'] }}"></input>
+        <br>
+
+        <label for="vote_average">Vote Average</label>
+        <br>
+        <input type="number" name="vote_average" min=0 max=10 step=0.1
+               placeholder="Please enter here the vote average"
+               value="{{ request.form['vote_average'] }}"></input>
+        <br>
+
+        <label for="vote_count">Number of vote</label>
+        <br>
+        <input type="number" name="vote_count" step=1
+               placeholder="Please enter here the number of vote"
+               value="{{ request.form['vote_count'] }}"></input>
+        <br>
+        
+        <button type="submit">Submit</button>
+    </form>
+{% endblock %}

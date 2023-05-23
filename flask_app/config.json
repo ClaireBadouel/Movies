@@ -1,0 +1,49 @@
+{ 
+    "DATABASE":{
+        "DB_NAME" : "movies",
+
+        "DB_PATH" : "C:/Users/clair/Projets/ICM/flask_app/database/",
+        "COLUMNS_DATABASE" : {
+            "title":"str", 
+            "description":"str", 
+            "genres":"str", 
+            "release_date":"str", 
+            "vote_average":"float", 
+            "vote_count":"int"
+        },
+
+        "ID" : "id",
+
+        "CSV_NAME" : "movies_metadata.csv",
+
+        "COLUMNS_DATABASE_SQLITE" : {
+            "id":"int",
+            "title":"text",
+            "description":"text",
+            "genres":"text",
+            "release_date":"text",
+            "vote_average":"real",
+            "vote_count":"int"
+        },
+
+        "COLUMNS_CSV_type" : {
+            "id":"integer",
+            "title":"str",
+            "description":"str",
+            "genres":"str",
+            "release_date":"str",
+            "vote_average":"float",
+            "vote_count":"integer"
+        },
+
+        "COLUMNS_CSV" : {
+            "id":"id",
+            "title":"title",
+            "overview":"description",
+            "genres":"genres",
+            "release_date":"release_date",
+            "vote_average":"vote_average",
+            "vote_count":"vote_count"
+        }
+    }
+}
