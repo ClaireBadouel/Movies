@@ -8,7 +8,7 @@ def create_app(test_config=None):
     # create and configure the app
     app = Flask(__name__, template_folder='C:/Users/clair/Projets/ICM/flask_app/flaskr/templates')
     app.json.sort_keys = False
-    app.config.from_file("../config.json", load=json.load)
+    #app.config.from_file("../config.json", load=json.load)
     
     if test_config is None:
         # load the instance config, if it exists, when not testing

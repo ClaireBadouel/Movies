@@ -2,10 +2,11 @@ import os
 import json
 from flask import abort 
 
-CONFIG_FILE_PATH = 'C:/Users/clair/Projets/ICM/flask_app'
+#CONFIG_FILE_PATH = ''
 #Load the config 
-with open(os.path.join(CONFIG_FILE_PATH,'config.json'), 'r') as config_file:
+with open(os.path.join('flaskr','config.json'), 'r') as config_file:
     config_data = json.load(config_file)
+    
 #Set environment variable from the dict config_data['DATABASE']
 for GLOB_VAR in config_data['DATABASE'].keys():
     exec(f"{GLOB_VAR}=config_data['DATABASE']['{GLOB_VAR}']")
