@@ -36,3 +36,7 @@ Fill the flask_app/config.
 ```bash
 flask --app flaskr init-db        
 ```
+Run the API
+```bash
+flask --app flaskr run --debug    
+```
