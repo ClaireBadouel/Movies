@@ -44,6 +44,13 @@
             "release_date":"release_date",
             "vote_average":"vote_average",
             "vote_count":"vote_count"
-        }
+        },
+        "genres_all" : [
+            "Action", "Adventure", "Animation",
+            "Comedy", "Crime", "Documentary",
+            "Drama", "Family", "Fantasy", 
+            "Foreign", "History", "Music",
+            "Mystery", "Romance", "Science Fiction",
+            "TV Movie", "Thriller", "War", "Western"]
     }
 }

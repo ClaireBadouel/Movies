@@ -84,31 +84,54 @@ def show_OR_delete_OR_update_movie(movie_id):
 @bp.route('/movies', methods=('GET', 'POST'))
 def create():
     if request.method == 'POST':
+        #get value from post
         title = request.form['title']
         description = request.form['description']
-        genres = ', '.join(request.form.getlist('genres'))
+        genres = request.form.getlist('genres')
         release_date = request.form['release_date']
         vote_average = request.form['vote_average']
         vote_count = request.form['vote_count']
         
-        if not title or not description or not genres or not release_date or not vote_average or not vote_count:
-            print('abort')
-            abort(404)
-            
+        #check values
+        title_check = (type(title) == str)
+        description_check = (type(description) == str)
+        genres_check = check_genres_exist(genres)
+        try : 
+            _=datetime.date.fromisoformat(release_date)
+            date_check = True
+        except:
+            date_check=False
+        try:
+            vote_average_check = (float(vote_average) >= 0.0 and float(vote_average) <= 10.0)
+        except:
+            vote_average_check = False
+        try: 
+            vote_count_check = (int(vote_count)>0)
+        except:
+            vote_count_check = False
+        
+        if title_check and description_check and genres_check and date_check and vote_average_check and vote_count_check:
+            genres = ', '.join(genres)
+
+            if not title or not description or not genres or not release_date or not vote_average or not vote_count:
+                abort(404)
+            else:
+                with get_db() as conn:
+                    c = conn.cursor()
+                    ids = [elt[0] for elt in c.execute("SELECT id FROM movies").fetchall()]
+                    #new_id = max([elt for elt in ids if type(elt)==int ])+1
+                    new_id = max(ids)+1
+                    sql = """INSERT INTO movies 
+                    (id, title, description, genres, release_date, vote_average, vote_count) 
+                    VALUES(?, ?, ?, ?, ?, ?, ?)"""
+                    print(new_id)
+                    c.execute(sql, (new_id,title, description, genres, release_date, vote_average, vote_count))
+                    conn.commit()
+                    #return(redirect('/movies/'+str(new_id)))
+                    return(redirect(f'/movies/{new_id}'))
         else:
-            with get_db() as conn:
-                c = conn.cursor()
-                ids = [elt[0] for elt in c.execute("SELECT id FROM movies").fetchall()]
-                #new_id = max([elt for elt in ids if type(elt)==int ])+1
-                new_id = max(ids)+1
-                sql = """INSERT INTO movies 
-                (id, title, description, genres, release_date, vote_average, vote_count) 
-                VALUES(?, ?, ?, ?, ?, ?, ?)"""
-                print(new_id)
-                c.execute(sql, (new_id,title, description, genres, release_date, vote_average, vote_count))
-                conn.commit()
-                #return(redirect('/movies/'+str(new_id)))
-                return(redirect(f'/movies/{new_id}'))
+            return([title_check, description_check, genres_check, date_check, vote_average_check, vote_count_check, vote_average, vote_count])
+            abort(404)
     return render_template('blog/create_movie.html')
     
 @bp.get('/movies/<string:search_term>')

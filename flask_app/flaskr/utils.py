@@ -130,3 +130,6 @@ def from_multiple_db_rows_to_dict(multiple_db_rows):
     ids = [movie[0] for movie in multiple_db_rows]
     all_movies['movies'] = dict(zip(ids, [from_db_row_to_dict(movie) for movie in multiple_db_rows]))
     return(all_movies)
+
+def check_genres_exist(genres, genres_all=genres_all):
+    return(all([g in genres_all for g in genres]))
