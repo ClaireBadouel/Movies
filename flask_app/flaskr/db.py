@@ -104,13 +104,12 @@ def init_db(
     )
 
     # Load CSV into sqlite table
-    CSV_DATA.to_sql("movies", conn, if_exists="append", index=False)
+    CSV_DATA.to_sql("movies", conn, if_exists="replace", index=False)
     c.execute("""SELECT * FROM movies""").fetchall()
 
 
 @click.command("init-db")
 def init_db_command():
-    """Clear the existing data and create new tables."""
     init_db()
     click.echo("Initialized the database.")
 
