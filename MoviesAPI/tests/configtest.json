@@ -1,6 +1,6 @@
 {
     "TEST_INPUT": {
-        "JSON_11860": {
+        "JSON_INPUT": {
             "id": 11860,
             "title": "Sabrina",
             "description": "An ugly duckling having undergone a remarkable change, still harbors feelings for her crush: a carefree playboy, but not before his business-focused brother has something to say about it.",
@@ -22,15 +22,47 @@
             "vote_average": 0.0,
             "vote_count": 9
         },
-        "formdata_incorrect_title": {
-            "title": 9,
-            "description": "description",
-            "genres": [
-                "Comedy"
-            ],
-            "release_date": "2023-04-01",
-            "vote_average": 0.0,
-            "vote_count": 9
+        "formdata_incorrect": {
+            "formdata_incorrect_vote": {
+                "title": "Pytest title",
+                "description": "description",
+                "genres": [
+                    "Comedy"
+                ],
+                "release_date": "2023-04-01",
+                "vote_average": 11.0,
+                "vote_count": 9
+            },
+            "formdata_incorrect_genres": {
+                "title": "Pytest title",
+                "description": "description",
+                "genres": [
+                    "Error"
+                ],
+                "release_date": "2023-04-01",
+                "vote_average": 0.0,
+                "vote_count": 9
+            },
+            "formdata_incorrect_date": {
+                "title": "Pytest title",
+                "description": "description",
+                "genres": [
+                    "Error"
+                ],
+                "release_date": "2023-31-01",
+                "vote_average": 0.0,
+                "vote_count": 9
+            },
+            "formdata_incorrect_vote_count": {
+                "title": "Pytest title",
+                "description": "description",
+                "genres": [
+                    "Error"
+                ],
+                "release_date": "2023-31-01",
+                "vote_average": 0.0,
+                "vote_count": -9
+            }
         }
     }
 }
