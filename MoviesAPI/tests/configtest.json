@@ -68,7 +68,7 @@
         "non_existing_movie_id_to_delete": 0,
         "existing_movie_to_update": {
             "id": 900,
-            "title": "Bringing Up Baby Updated",
+            "title": "Bringing Up Baby Updated Again",
             "description": "",
             "genres": [
                 "Comedy"

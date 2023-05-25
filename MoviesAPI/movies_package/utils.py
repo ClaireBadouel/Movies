@@ -232,3 +232,47 @@ def delete_movie_from_id(movie_id, conn):
         return Response("", status=204)
     else:
         abort(404)
+
+
+def is_movie_not_existing(conn, movie_id):
+    c = conn.cursor()
+    res = c.execute(
+        "SELECT EXISTS(SELECT * FROM movies WHERE id==?)", (movie_id,)
+    ).fetchall()
+    return res[0][0] != 1
+
+
+def is_all_keys_in_json(request):
+    return all([key in COLUMNS_DATABASE for key in request.keys()])
+
+
+def check_request_type(updated_movie):
+    if "vote_average" in updated_movie:
+        try:
+            type(updated_movie["vote_average"]) == float
+        except:
+            return {}
+    if "vote_count" in updated_movie:
+        try:
+            type(updated_movie["vote_count"]) == int
+        except:
+            return {}
+    if "genres" in updated_movie:
+        try:
+            updated_movie["genres"] = ", ".join(updated_movie["genres"])
+        except:
+            return {}
+    return updated_movie
+
+
+def send_put_request(conn, updated_movie, movie_id):
+    sql_request = (
+        f"UPDATE movies SET {' = ? ,'.join(updated_movie.keys())} = ? WHERE id = ?"
+    )
+    values_request = tuple(list(updated_movie.values()) + [movie_id])
+    c = conn.cursor()
+    c.execute(
+        sql_request,
+        values_request,
+    )
+    conn.commit()

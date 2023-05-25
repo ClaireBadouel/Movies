@@ -54,42 +54,17 @@ def handle_movie(movie_id):
 
     if request.method == "PUT":
         with get_db() as conn:
-            c = conn.cursor()
-            res = c.execute(
-                "SELECT EXISTS(SELECT * FROM movies WHERE id==?)", (movie_id,)
-            ).fetchall()
-            if res[0][0] != 1:
+            if utils.is_movie_not_existing(conn, movie_id):
                 abort(404)
             else:
-                if all([key in COLUMNS_DATABASE for key in request.json.keys()]):
+                if utils.is_all_keys_in_json(request.json):
                     # all the keys of the json should be columns name of the database /!\ except id /!\
-                    updated_movie = request.json.copy()
-                    if "vote_average" in updated_movie:
-                        try:
-                            type(updated_movie["vote_average"]) == float
-                        except:
-                            return abort(400, "Request body is invalid")
-                    if "vote_count" in updated_movie:
-                        try:
-                            type(updated_movie["vote_count"]) == int
-                        except:
-                            return abort(400, "Request body is invalid")
-                    if "genres" in updated_movie:
-                        try:
-                            updated_movie["genres"] = ", ".join(updated_movie["genres"])
-                        except:
-                            return abort(400, "Request body is invalid")
-                    # sql_request = 'UPDATE movies SET ' + ' = ? ,'.join(request.json.keys())+' = ? WHERE id = ?'
-                    sql_request = f"UPDATE movies SET {' = ? ,'.join(updated_movie.keys())} = ? WHERE id = ?"
-                    # return([sql_request, tuple(list(request.json.values())+[str(movie_id)])])
-                    # return jsonify(tuple(list(updated_movie.values()) + [movie_id]))
-                    values_request = tuple(list(updated_movie.values()) + [movie_id])
-                    c.execute(
-                        sql_request,
-                        values_request,
-                    )
-                    conn.commit()
-                    return redirect(f"/movies/{movie_id}")
+                    updated_movie = utils.check_request_type(request.json.copy())
+                    if updated_movie == {}:
+                        return abort(400, "Request body is invalid")
+                    else:
+                        utils.send_put_request(conn, updated_movie, movie_id)
+                        return redirect(f"/movies/{movie_id}")
                 else:
                     return abort(400, "Request body is invalid")
 
