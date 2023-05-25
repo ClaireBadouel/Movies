@@ -104,8 +104,8 @@ def test_DELETE_existing_movie(
     # the endpoint returns the expected response
     # the endpoint returns the expected status code
     response = client.delete(f"/movies/{int(existing_movie_id_to_delete)}")
-    # assert response.status_code == 204
-    # assert response.data == b""
+    assert response.status_code == 204
+    assert response.data == b""
 
 
 def test_DELETE_non_existing_movie(

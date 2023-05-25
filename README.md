@@ -1,13 +1,12 @@
 # Movies
 
-Make MoviesAPI your working directory :
+## Make MoviesAPI your working directory :
 ```bash
 cd ./MoviesAPI
 ```
 
-#Create and setup an python env
 
-how to create the virtual environment: 
+## Create the virtual environment: 
 
 Unix/Mac : 
 
@@ -30,32 +29,30 @@ When env activated, install requirement.txt :
 pip install -r requirements.txt
 ```
 
-Install MoviesAPI
+### Install MoviesAPI
 ```bash
 pip install -e .
 ```
 
-# Create the database 
+## Create the database 
 
 Fill the MoviesAPI/config.
 
 ```bash
 flask --app movies_package init-db        
 ```
-Run the API
+## Run the API
 ```bash
 flask --app movies_package run --debug    
+```
+
+## Run the test : 
+```bash
+flask --app movies_package init-db
+pytest
 ```
 
 # http://127.0.0.1:5000/movies/?genre=Comedy&after=2000-01-01&vote_average=6
 #http PUT localhost:5000/movies/movie_id *args=values
 #http PUT localhost:5000/movies/862 title='new title'
 http DELETE localhost:5000/movies/862
-
-
-Run the test : 
-
-```bash
-flask --app movies_package init-db
-pytest
-```

@@ -15,6 +15,11 @@ def create_app(test_config=None):
     db.init_app(app)
     app.register_blueprint(blog.bp)
     app.add_url_rule(
+        "/",
+        "index",
+        methods=["GET"],
+    )
+    app.add_url_rule(
         "/movies/<int:movie_id>",
         "handle_movie",
         methods=["GET", "DELETE", "PUT"],

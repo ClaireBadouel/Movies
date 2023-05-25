@@ -283,3 +283,44 @@ def send_put_request(conn, updated_movie, movie_id):
         values_request,
     )
     conn.commit()
+
+
+def get_like_request_from_query_param(query_parameters):
+    like_request = []
+    is_forbidden_request = False
+    if "genre" in query_parameters.keys():
+        genres = query_parameters.get("genre")
+        like_request.append(f"genres like '%{genres}%'")
+
+    if "before" in query_parameters.keys():
+        before = query_parameters.get("before")
+        try:
+            _ = datetime.date.fromisoformat(before)
+        except:
+            is_forbidden_request = True
+        like_request.append(f"release_date <= date('{before}')")
+
+    if "after" in query_parameters.keys():
+        after = query_parameters.get("after")
+        try:
+            _ = datetime.date.fromisoformat(after)
+        except:
+            is_forbidden_request = True
+        like_request.append(f"release_date >= date('{after}')")
+
+    if "vote_average" in query_parameters.keys():
+        vote_average = float(query_parameters.get("vote_average"))
+        if vote_average >= 0 and vote_average <= 10:
+            like_request.append(f"vote_average >= {vote_average}")
+        else:
+            is_forbidden_request = True
+    return (is_forbidden_request, like_request)
+
+
+def is_filter_compliant(query_parameters):
+    return all(
+        [
+            key in ["genre", "before", "after", "vote_average"]
+            for key in query_parameters.keys()
+        ]
+    )
