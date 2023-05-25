@@ -1,6 +1,7 @@
 import os
 import datetime
 import json
+import sqlite3
 
 # the endpoint returns the expected response
 # the endpoint returns the expected status code
@@ -13,6 +14,14 @@ with open(os.path.join("tests", "configtest.json"), "r") as config_file:
 # Set environment variable from the dict config_data['DATABASE']
 for GLOB_VAR in config_data["TEST_INPUT"].keys():
     exec(f"{GLOB_VAR}=config_data['TEST_INPUT']['{GLOB_VAR}']")
+
+with open(os.path.join("tests", "configtest.json"), "r") as config_file:
+    config_data = json.load(config_file)
+
+# Set environment variable from the dict config_data['DATABASE']
+for GLOB_VAR in config_data["DATABASE"].keys():
+    exec(f"{GLOB_VAR}=config_data['DATABASE']['{GLOB_VAR}']")
+
 
 list_formdata_incorrect = [formdata_incorrect[key] for key in formdata_incorrect.keys()]
 
@@ -162,3 +171,24 @@ def test_PUT_non_existing_movie_without_id(
         follow_redirects=True,
     )
     assert response.status_code == 404
+
+    ################### Expected behavior for "/movies/" - methods=("GET") ###################
+    # Return a list of movies. The response must be a JSON object with the following fields:
+    # * `count`: the total number of movies returned from the request
+    # * `movies`: an array of movies (see the movie object above) :
+    #    /!\   Here it is not an array of movie but a dict of movie   /!\
+    ###########################################################################################
+
+
+def test_GET_all_movie(client, DB_PATH=DB_PATH, DB_NAME=DB_NAME):
+    # the endpoint returns the expected response
+    response = client.get("/movies/")
+    response_data = json.loads(response.data)
+    with sqlite3.connect(os.path.join(DB_PATH, f"{DB_NAME}.db")) as conn:
+        c = conn.cursor()
+        count = c.execute("""SELECT COUNT(*) FROM movies""").fetchall()[0][0]
+    assert "count" in response_data
+    assert "movies" in response_data
+    # Non sorted Issue
+    assert response_data["count"] == count - 2
+    assert len(response_data["movies"].keys()) == count - 2

@@ -1,4 +1,8 @@
 {
+    "DATABASE": {
+        "DB_NAME": "movies",
+        "DB_PATH": "../database/"
+    },
     "TEST_INPUT": {
         "JSON_INPUT": {
             "id": 11860,

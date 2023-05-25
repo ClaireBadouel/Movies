@@ -137,11 +137,12 @@ def from_multiple_db_rows_to_dict(multiple_db_rows):
             'movies': dictionnary mapping id (int) to the corresponding movies
     """
     all_movies = dict()
-    all_movies["count"] = len(multiple_db_rows)
+    all_movies["count"] = 0
     ids = [movie[0] for movie in multiple_db_rows]
     all_movies["movies"] = dict(
         zip(ids, [from_db_row_to_dict(movie) for movie in multiple_db_rows])
     )
+    all_movies["count"] = len(all_movies["movies"])
     return all_movies
 
 
