@@ -64,4 +64,4 @@ def test_multiple_POST_incorrect_format_movies(
         print(one_formdata_incorrect)
         response = client.post("/movies", data=one_formdata_incorrect)
         print(response.status_code)
-        assert response.status_code == 404
+        assert response.status_code == 400

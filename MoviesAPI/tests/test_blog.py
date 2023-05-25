@@ -22,6 +22,9 @@ for GLOB_VAR in config_data["TEST_INPUT"].keys():
 
 
 def test_GET_movies_ID(client, JSON_INPUT=JSON_INPUT):
+    ######################## Expected behavior ########################
+    # Return the movie with the given id or a 404 error if not found
+    ###################################################################
     # the endpoint returns the expected response :
     # movie 11860 correspond to the one in the database
     # and
@@ -35,6 +38,13 @@ def test_GET_movies_ID(client, JSON_INPUT=JSON_INPUT):
 
 
 def test_POST_movies(client):
+    ######################## Expected behavior ########################
+    # Create a new movie. The body of the request must be a JSON object
+    # representing the movie to create. The id field must not be set in
+    # the request body. Return the created movie with its id, or a 400
+    # error with an explicit error message if the request body is invalid.
+    ###################################################################
+
     # the endpoint returns the expected response
     # a movie is created and then the user is redirected to the corresponding path
     # and

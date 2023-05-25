@@ -146,7 +146,7 @@ def create():
                 or not vote_average
                 or not vote_count
             ):
-                abort(404)
+                abort(400)
             else:
                 with get_db() as conn:
                     c = conn.cursor()
@@ -175,7 +175,7 @@ def create():
                     # return(redirect('/movies/'+str(new_id)))
                     return redirect(f"/movies/{new_id}")
         else:
-            abort(404)
+            abort(400)
     return render_template("blog/create_movie.html")
 
 
