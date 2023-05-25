@@ -115,7 +115,11 @@ def test_DELETE_non_existing_movie(
     ############################################################################
 
 
-def test_PUT_existing_movie(client, existing_movie_to_update=existing_movie_to_update):
+def test_PUT_existing_movie_with_id(
+    client, existing_movie_to_update=existing_movie_to_update
+):
+    # the endpoint returns the expected response when the request is invalid
+
     response = client.put(
         f"/movies/{existing_movie_to_update['id']}",
         data=json.dumps(existing_movie_to_update),
@@ -125,6 +129,11 @@ def test_PUT_existing_movie(client, existing_movie_to_update=existing_movie_to_u
     assert response.status_code == 400
     assert b"Request body is invalid" in response.data
 
+
+def test_PUT_existing_movie_without_id(
+    client, existing_movie_to_update=existing_movie_to_update
+):
+    # the endpoint returns the expected response
     correct_request = existing_movie_to_update.copy()
     del correct_request["id"]
     response = client.put(
@@ -133,7 +142,23 @@ def test_PUT_existing_movie(client, existing_movie_to_update=existing_movie_to_u
         content_type="application/json",
         follow_redirects=True,
     )
-    print(response.data)
     redirection = response.request.path
     redirection_response = json.loads(client.get(redirection).data)
     assert redirection_response == existing_movie_to_update
+
+
+def test_PUT_non_existing_movie_without_id(
+    client,
+    existing_movie_to_update=existing_movie_to_update,
+    non_existing_movie_to_update=non_existing_movie_to_update,
+):
+    # the endpoint returns the expected response
+    correct_request = existing_movie_to_update.copy()
+    del correct_request["id"]
+    response = client.put(
+        f"/movies/{non_existing_movie_to_update}",
+        data=json.dumps(correct_request),
+        content_type="application/json",
+        follow_redirects=True,
+    )
+    assert response.status_code == 404
