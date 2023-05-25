@@ -16,9 +16,9 @@ build/
 flask_app/_old/
 flask_app/env/
 flask_app/.venv/
-flask_app/database/_old/
-flask_app/database/*.py
-flask_app/database/*.db
+database/_old/
+database/*.py
+database/*.db
 
 
 
