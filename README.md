@@ -1,8 +1,8 @@
 # Movies
 
-Make flask_app your working directory :
+Make MoviesAPI your working directory :
 ```bash
-cd ./flask_app
+cd ./MoviesAPI
 ```
 
 #Create and setup an python env
@@ -29,11 +29,15 @@ When env activated, install requirement.txt :
 ```powershell
 pip install -r requirements.txt
 ```
-http PUT localhost:5000/movies/862 title='new title'
+
+Install MoviesAPI
+```bash
+pip install -e .
+```
 
 # Create the database 
 
-Fill the flask_app/config.
+Fill the MoviesAPI/config.
 
 ```bash
 flask --app flaskr init-db        

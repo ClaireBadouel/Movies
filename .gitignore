@@ -13,12 +13,11 @@ dist/
 build/
 *.egg-info/
 
-flask_app/_old/
-flask_app/env/
-flask_app/.venv/
+MoviesAPI/_old/
+MoviesAPI/env/
+MoviesAPI/.venv/
 database/_old/
 database/*.py
 database/*.db
-
-
-
+ICM-env/
+.*/
