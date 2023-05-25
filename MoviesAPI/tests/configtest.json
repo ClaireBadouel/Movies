@@ -65,6 +65,18 @@
             }
         },
         "existing_movie_id_to_delete": 949,
-        "non_existing_movie_id_to_delete": 0
+        "non_existing_movie_id_to_delete": 0,
+        "existing_movie_to_update": {
+            "id": 900,
+            "title": "Bringing Up Baby Updated",
+            "description": "",
+            "genres": [
+                "Comedy"
+            ],
+            "release_date": "1940-02-18",
+            "vote_average": 0.2,
+            "vote_count": 399
+        },
+        "non_existing_movie_to_update": 0
     }
 }

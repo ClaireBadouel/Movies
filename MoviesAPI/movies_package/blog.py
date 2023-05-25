@@ -10,6 +10,8 @@ from werkzeug.exceptions import abort
 from movies_package.db import get_db
 import movies_package.utils as utils
 import datetime
+import json
+import os
 
 bp = Blueprint("blog", __name__)
 
@@ -29,6 +31,14 @@ bp = Blueprint("blog", __name__)
 #     def findMovieById(self, movie_id: int):
 #         return {"id": 123}
 
+# Load the config
+with open(os.path.join("movies_package", "config.json"), "r") as config_file:
+    config_data = json.load(config_file)
+
+# Set environment variable from the dict config_data['DATABASE']
+for GLOB_VAR in config_data["DATABASE"].keys():
+    exec(f"{GLOB_VAR}=config_data['DATABASE']['{GLOB_VAR}']")
+
 
 @bp.route("/movies/<int:movie_id>", methods=("GET", "DELETE", "PUT"))
 def handle_movie(movie_id):
@@ -45,34 +55,43 @@ def handle_movie(movie_id):
     if request.method == "PUT":
         with get_db() as conn:
             c = conn.cursor()
-            if request.method == "PUT":
-                res = c.execute(
-                    "SELECT EXISTS(SELECT * FROM movies WHERE id==?)", (movie_id,)
-                ).fetchall()
-                if res[0][0] != 1:
-                    abort(404)
+            res = c.execute(
+                "SELECT EXISTS(SELECT * FROM movies WHERE id==?)", (movie_id,)
+            ).fetchall()
+            if res[0][0] != 1:
+                abort(404)
+            else:
+                if all([key in COLUMNS_DATABASE for key in request.json.keys()]):
+                    # all the keys of the json should be columns name of the database /!\ except id /!\
+                    updated_movie = request.json.copy()
+                    if "vote_average" in updated_movie:
+                        try:
+                            type(updated_movie["vote_average"]) == float
+                        except:
+                            return abort(400, "Request body is invalid")
+                    if "vote_count" in updated_movie:
+                        try:
+                            type(updated_movie["vote_count"]) == int
+                        except:
+                            return abort(400, "Request body is invalid")
+                    if "genres" in updated_movie:
+                        try:
+                            updated_movie["genres"] = ", ".join(updated_movie["genres"])
+                        except:
+                            return abort(400, "Request body is invalid")
+                    # sql_request = 'UPDATE movies SET ' + ' = ? ,'.join(request.json.keys())+' = ? WHERE id = ?'
+                    sql_request = f"UPDATE movies SET {' = ? ,'.join(updated_movie.keys())} = ? WHERE id = ?"
+                    # return([sql_request, tuple(list(request.json.values())+[str(movie_id)])])
+                    # return jsonify(tuple(list(updated_movie.values()) + [movie_id]))
+                    values_request = tuple(list(updated_movie.values()) + [movie_id])
+                    c.execute(
+                        sql_request,
+                        values_request,
+                    )
+                    conn.commit()
+                    return redirect(f"/movies/{movie_id}")
                 else:
-                    if all([key in COLUMNS_DATABASE for key in request.json.keys()]):
-                        # all the keys of the json should be columns name of the database /!\ except id /!\
-                        if "vote_average" in request.json:
-                            try:
-                                _ = float(request.json.get("vote_average"))
-                            except:
-                                return abort(404)
-                        if "vote_count" in request.json:
-                            try:
-                                _ = int(request.json.get("vote_count"))
-                            except:
-                                return abort(404)
-                        # sql_request = 'UPDATE movies SET ' + ' = ? ,'.join(request.json.keys())+' = ? WHERE id = ?'
-                        sql_request = f"UPDATE movies SET {' = ? ,'.join(request.json.keys())} = ? WHERE id = ?"
-                        # return([sql_request, tuple(list(request.json.values())+[str(movie_id)])])
-                        values_request = tuple(list(request.json.values()) + [movie_id])
-                        c.execute(sql_request, values_request)
-                        conn.commit()
-                        return redirect(f"/movies/{movie_id}")
-                    else:
-                        return abort(404)
+                    return abort(400, "Request body is invalid")
 
 
 @bp.route("/movies", methods=("GET", "POST"))
