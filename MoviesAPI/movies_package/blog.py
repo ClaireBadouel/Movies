@@ -31,7 +31,7 @@ bp = Blueprint("blog", __name__)
 
 
 @bp.route("/movies/<int:movie_id>", methods=("GET", "DELETE", "PUT"))
-def show_OR_delete_OR_update_movie(movie_id):
+def handle_movie(movie_id):
     if request.method == "GET":
         """
             Get a movie id (int) and return a corresponding JSON response object
@@ -43,8 +43,9 @@ def show_OR_delete_OR_update_movie(movie_id):
             to the corresponding values in the movie
         """
         with get_db() as conn:
-            res = get_movie_from_id_as_dict(movie_id, conn)
-            return jsonify(res)
+            # res = get_movie_from_id(movie_id, conn)
+            return get_movie_from_id(movie_id, conn)
+        # jsonify(res)
 
     if request.method == "DELETE":
         """
@@ -101,81 +102,33 @@ def show_OR_delete_OR_update_movie(movie_id):
 def create():
     if request.method == "POST":
         # get value from post
-        title = request.form["title"]
-        description = request.form["description"]
-        genres = request.form.getlist("genres")
-        release_date = request.form["release_date"]
-        vote_average = request.form["vote_average"]
-        vote_count = request.form["vote_count"]
+        fields = get_fields_from_form(request.form)
 
-        # check values
-        title_check = type(title) == str
-        description_check = type(description) == str
-        genres_check = check_genres_exist(genres)
-        try:
-            _ = datetime.date.fromisoformat(release_date)
-            date_check = True
-        except:
-            date_check = False
-        try:
-            vote_average_check = (
-                float(vote_average) >= 0.0 and float(vote_average) <= 10.0
-            )
-        except:
-            vote_average_check = False
-        try:
-            vote_count_check = int(vote_count) > 0
-        except:
-            vote_count_check = False
+        if check_fields(fields):
+            fields = modify_gender_from_fields(fields)
 
-        if (
-            title_check
-            and description_check
-            and genres_check
-            and date_check
-            and vote_average_check
-            and vote_count_check
-        ):
-            genres = ", ".join(genres)
+            with get_db() as conn:
+                c = conn.cursor()
 
-            if (
-                not title
-                or not description
-                or not genres
-                or not release_date
-                or not vote_average
-                or not vote_count
-            ):
-                abort(400)
-            else:
-                with get_db() as conn:
-                    c = conn.cursor()
-                    ids = [
-                        elt[0] for elt in c.execute("SELECT id FROM movies").fetchall()
-                    ]
-                    # new_id = max([elt for elt in ids if type(elt)==int ])+1
-                    new_id = int(max(ids) + 1)
-                    sql = """INSERT INTO movies 
-                    (id, title, description, genres, release_date, vote_average, vote_count) 
-                    VALUES(?, ?, ?, ?, ?, ?, ?)"""
-                    print(new_id)
-                    c.execute(
-                        sql,
-                        (
-                            new_id,
-                            title,
-                            description,
-                            genres,
-                            release_date,
-                            vote_average,
-                            vote_count,
-                        ),
-                    )
-                    conn.commit()
-                    # return(redirect('/movies/'+str(new_id)))
-                    return redirect(f"/movies/{new_id}")
+                new_id = generate_new_id(conn)
+
+                fields = add_new_id_to_field(fields, new_id)
+
+                sql = """INSERT INTO movies 
+                (id, title, description, genres, release_date, vote_average, vote_count) 
+                VALUES(?, ?, ?, ?, ?, ?, ?)"""
+
+                c.execute(
+                    sql,
+                    fields,
+                )
+
+                conn.commit()
+
+                # return(redirect('/movies/'+str(new_id)))
+                return redirect(f"/movies/{new_id}")
         else:
-            abort(400)
+            abort(400, "Field(s) type incorrect")
     return render_template("blog/create_movie.html")
 
 

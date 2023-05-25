@@ -1,6 +1,15 @@
 import os
 import json
 from flask import abort
+import datetime
+from flask import (
+    Blueprint,
+    g,
+    redirect,
+    render_template,
+    request,
+    jsonify,
+)
 
 # CONFIG_FILE_PATH = ''
 # Load the config
@@ -31,21 +40,7 @@ def from_db_row_to_dict(db_row, ID=ID, COLUMNS_DATABASE=COLUMNS_DATABASE):
     return res
 
 
-def get_movie_from_id_as_dict(movie_id, conn, ID=ID, COLUMNS_DATABASE=COLUMNS_DATABASE):
-    """
-    Get a single movie id and return a dict mapping database columns names
-    to their corresponding values for this movie.
-
-    Args:
-        movie_id (int): movie id
-        conn (sqlite3.Connection): sqlite3.Connection of the database
-        ID (str, optional): Single database column name used as index. Defaults to ID.
-        COLUMNS_DATABASE (dict, optional):  Dictionnary mapping the database columns names to the corresponding
-                                            types , except the index columns). Defaults to COLUMNS_DATABASE.
-
-    Returns:
-        dict : dict mapping database columns names to the corresponding values in the movie
-    """
+"""def get_movie_from_id_as_dict(movie_id, conn, ID=ID, COLUMNS_DATABASE=COLUMNS_DATABASE):
     c = conn.cursor()
     sql_request = f"SELECT {', '.join([ID]+list(COLUMNS_DATABASE.keys()))} FROM movies WHERE {ID}==?"
     #'SELECT '+', '.join([ID]+list(COLUMNS_DATABASE.keys())) +' FROM movies WHERE '+ID+'==?'
@@ -55,7 +50,7 @@ def get_movie_from_id_as_dict(movie_id, conn, ID=ID, COLUMNS_DATABASE=COLUMNS_DA
         abort(404)
     else:
         movie_dict = from_db_row_to_dict(res[0])
-    return movie_dict
+    return movie_dict"""
 
 
 def from_db_row_to_dict(
@@ -108,7 +103,7 @@ def correct_type(movie, ID=ID, ID_type=ID_type, COLUMNS_DATABASE=COLUMNS_DATABAS
     return movie
 
 
-def get_movie_from_id_as_dict(movie_id, conn, ID=ID, COLUMNS_DATABASE=COLUMNS_DATABASE):
+def get_movie_from_id(movie_id, conn, ID=ID, COLUMNS_DATABASE=COLUMNS_DATABASE):
     """
     Get a single movie id and return a dict mapping database columns names
     to their corresponding values for this movie.
@@ -132,7 +127,7 @@ def get_movie_from_id_as_dict(movie_id, conn, ID=ID, COLUMNS_DATABASE=COLUMNS_DA
         abort(404)
     else:
         movie_dict = from_db_row_to_dict(res[0])
-    return movie_dict
+    return jsonify(movie_dict)
 
 
 def from_multiple_db_rows_to_dict(multiple_db_rows):
@@ -157,3 +152,68 @@ def from_multiple_db_rows_to_dict(multiple_db_rows):
 
 def check_genres_exist(genres, genres_all=genres_all):
     return all([g in genres_all for g in genres])
+
+
+def get_fields_from_form(form):
+    title = form["title"]
+    description = form["description"]
+    genres = form.getlist("genres")
+    release_date = form["release_date"]
+    vote_average = form["vote_average"]
+    vote_count = form["vote_count"]
+    return (title, description, genres, release_date, vote_average, vote_count)
+
+
+def check_fields(fields):
+    title, description, genres, release_date, vote_average, vote_count = fields
+    title_check = type(title) == str
+    description_check = type(description) == str
+    genres_check = check_genres_exist(genres)
+    try:
+        _ = datetime.date.fromisoformat(release_date)
+        date_check = True
+    except:
+        date_check = False
+    try:
+        vote_average_check = float(vote_average) >= 0.0 and float(vote_average) <= 10.0
+    except:
+        vote_average_check = False
+    try:
+        vote_count_check = int(vote_count) > 0
+    except:
+        vote_count_check = False
+    return (
+        title_check
+        and description_check
+        and genres_check
+        and date_check
+        and vote_average_check
+        and vote_count_check
+    )
+
+
+def modify_gender_from_fields(fields):
+    title, description, genres, release_date, vote_average, vote_count = fields
+    genres = ", ".join(genres)
+    return (title, description, genres, release_date, vote_average, vote_count)
+
+
+def add_new_id_to_field(fields, new_id):
+    title, description, genres, release_date, vote_average, vote_count = fields
+    return (
+        new_id,
+        title,
+        description,
+        genres,
+        release_date,
+        vote_average,
+        vote_count,
+    )
+
+
+def generate_new_id(conn):
+    c = conn.cursor()
+    ids = [elt[0] for elt in c.execute("SELECT id FROM movies").fetchall()]
+    # new_id = max([elt for elt in ids if type(elt)==int ])+1
+    new_id = int(max(ids) + 1)
+    return new_id

@@ -16,7 +16,7 @@ def create_app(test_config=None):
     app.register_blueprint(blog.bp)
     app.add_url_rule(
         "/movies/<int:movie_id>",
-        "show_OR_delete_OR_update_movie",
+        "handle_movie",
         methods=["GET", "DELETE", "PUT"],
     )
     app.add_url_rule("/movies", "create", methods=["GET", "POST"])
