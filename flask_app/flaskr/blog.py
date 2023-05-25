@@ -1,11 +1,9 @@
 from flask import (
     Blueprint,
-    flash,
     g,
     redirect,
     render_template,
     request,
-    url_for,
     jsonify,
 )
 from werkzeug.exceptions import abort
@@ -156,7 +154,7 @@ def create():
                         elt[0] for elt in c.execute("SELECT id FROM movies").fetchall()
                     ]
                     # new_id = max([elt for elt in ids if type(elt)==int ])+1
-                    new_id = max(ids) + 1
+                    new_id = int(max(ids) + 1)
                     sql = """INSERT INTO movies 
                     (id, title, description, genres, release_date, vote_average, vote_count) 
                     VALUES(?, ?, ?, ?, ?, ?, ?)"""
@@ -177,16 +175,6 @@ def create():
                     # return(redirect('/movies/'+str(new_id)))
                     return redirect(f"/movies/{new_id}")
         else:
-            return [
-                title_check,
-                description_check,
-                genres_check,
-                date_check,
-                vote_average_check,
-                vote_count_check,
-                vote_average,
-                vote_count,
-            ]
             abort(404)
     return render_template("blog/create_movie.html")
 
@@ -202,7 +190,6 @@ def get_all_movies_with_word(search_term, COLUMNS_SEARCHED=["title", "descriptio
     return jsonify(all_movies)
 
 
-# http://127.0.0.1:5000/movies/?genre=Comedy&after=2000-01-01&vote_average=6
 @bp.get("/movies/")
 def api_filter():
     query_parameters = request.args
@@ -243,11 +230,17 @@ def api_filter():
         with get_db() as conn:
             c = conn.cursor()
             # "SELECT "+", ".join([ID]+list(COLUMNS_DATABASE.keys())) +" FROM movies WHERE title like '%"+search_term+"%' AND description like '%"+search_term+"%';"
-            sql_request = f"""SELECT {
-                                        ', '.join([ID]+list(COLUMNS_DATABASE.keys())) 
-                                    } FROM movies WHERE {
-                                        ' AND '.join(like_request)
-                                    };"""
+            if len(like_request) > 0:
+                sql_request = f"""SELECT {
+                                            ', '.join([ID]+list(COLUMNS_DATABASE.keys())) 
+                                        } FROM movies WHERE {
+                                            ' AND '.join(like_request)
+                                        };"""
+            else:
+                sql_request = f"""SELECT {
+                            ', '.join([ID]+list(COLUMNS_DATABASE.keys())) 
+                        } FROM movies ;"""
+
             res = c.execute(sql_request).fetchall()
         all_movies = from_multiple_db_rows_to_dict(res)
         return jsonify(all_movies)

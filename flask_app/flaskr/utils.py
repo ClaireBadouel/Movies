@@ -58,7 +58,9 @@ def get_movie_from_id_as_dict(movie_id, conn, ID=ID, COLUMNS_DATABASE=COLUMNS_DA
     return movie_dict
 
 
-def from_db_row_to_dict(db_row, ID=ID, COLUMNS_DATABASE=COLUMNS_DATABASE):
+def from_db_row_to_dict(
+    db_row, ID=ID, ID_type=ID_type, COLUMNS_DATABASE=COLUMNS_DATABASE
+):
     """
     Get a single row of the database as a tuple and return a dict mapping database columns names
     to their corresponding values for this database row.
@@ -66,6 +68,7 @@ def from_db_row_to_dict(db_row, ID=ID, COLUMNS_DATABASE=COLUMNS_DATABASE):
     Args:
         db_row (tuple): Single database row
         ID (str, optional): Single database column name used as index. Defaults to ID.
+        ID_type (str, optional): Index type. Defaults to ID_type.
         COLUMNS_DATABASE (dict, optional):  Dictionnary mapping the database columns names to the corresponding
                                             types , except the index columns). Defaults to COLUMNS_DATABASE.
 
@@ -73,8 +76,36 @@ def from_db_row_to_dict(db_row, ID=ID, COLUMNS_DATABASE=COLUMNS_DATABASE):
         dict : dict mapping database columns names to the corresponding values in the the database row
     """
     res = dict(zip([ID] + list(COLUMNS_DATABASE.keys()), db_row))
-    res["genres"] = res["genres"].split(", ")
-    return res
+
+    return correct_type(res)
+
+
+def correct_type(movie, ID=ID, ID_type=ID_type, COLUMNS_DATABASE=COLUMNS_DATABASE):
+    """
+    Correct field type of the dict movie, if not possible the field is replace by 'TypeError'
+
+    Args:
+        movie (dict): dict mapping database columns names to the corresponding values for the movie
+        ID (str, optional): Single database column name used as index. Defaults to ID.
+        ID_type (str, optional): Index type. Defaults to ID_type.
+        COLUMNS_DATABASE (dict, optional):  Dictionnary mapping the database columns names to the corresponding
+                                            types , except the index columns). Defaults to COLUMNS_DATABASE. Defaults
+                                            to COLUMNS_DATABASE.
+
+    Returns:
+        dict: dict mapping database columns names to the corresponding values for the movie, with correct type
+    """
+    for k in COLUMNS_DATABASE.keys():
+        try:
+            exec(f"movie['{k}']={COLUMNS_DATABASE[k]}(movie['{k}'])")
+        except:
+            movie[k] = "TypeError"
+
+    exec(f"movie['{ID}']={ID_type}(movie['{ID}'])")
+
+    movie["genres"] = movie["genres"].split(", ")
+
+    return movie
 
 
 def get_movie_from_id_as_dict(movie_id, conn, ID=ID, COLUMNS_DATABASE=COLUMNS_DATABASE):

@@ -1,7 +1,7 @@
 {
     "DATABASE": {
         "DB_NAME": "movies",
-        "DB_PATH": "database/",
+        "DB_PATH": "../database/",
         "COLUMNS_DATABASE": {
             "title": "str",
             "description": "str",
@@ -11,6 +11,7 @@
             "vote_count": "int"
         },
         "ID": "id",
+        "ID_type": "int",
         "CSV_NAME": "movies_metadata.csv",
         "COLUMNS_DATABASE_SQLITE": {
             "id": "int",

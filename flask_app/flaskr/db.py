@@ -18,7 +18,6 @@ for GLOB_VAR in config_data["DATABASE"].keys():
 def get_db(DB_PATH=DB_PATH, DB_NAME=DB_NAME):
     if "db" not in g:
         g.db = sqlite3.connect(os.path.join(DB_PATH, f"{DB_NAME}.db"))
-
     return g.db
 
 
