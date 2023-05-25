@@ -64,11 +64,16 @@ def from_db_row_to_dict(
         dict : dict mapping database columns names to the corresponding values in the the database row
     """
     res = dict(zip([ID] + list(COLUMNS_DATABASE.keys()), db_row))
+    return correct_type(res, correct_genres=True)
 
-    return correct_type(res)
 
-
-def correct_type(movie, ID=ID, ID_type=ID_type, COLUMNS_DATABASE=COLUMNS_DATABASE):
+def correct_type(
+    movie,
+    ID=ID,
+    ID_type=ID_type,
+    COLUMNS_DATABASE=COLUMNS_DATABASE,
+    correct_genres=True,
+):
     """
     Correct field type of the dict movie, if not possible the field is replace by 'TypeError'
 
@@ -83,7 +88,9 @@ def correct_type(movie, ID=ID, ID_type=ID_type, COLUMNS_DATABASE=COLUMNS_DATABAS
     Returns:
         dict: dict mapping database columns names to the corresponding values for the movie, with correct type
     """
-    for k in COLUMNS_DATABASE.keys():
+    keep_keys = list(COLUMNS_DATABASE.keys())
+    keep_keys.remove("genres")
+    for k in keep_keys:
         try:
             exec(f"movie['{k}']={COLUMNS_DATABASE[k]}(movie['{k}'])")
         except:
@@ -91,7 +98,8 @@ def correct_type(movie, ID=ID, ID_type=ID_type, COLUMNS_DATABASE=COLUMNS_DATABAS
 
     exec(f"movie['{ID}']={ID_type}(movie['{ID}'])")
 
-    movie["genres"] = movie["genres"].split(", ")
+    if correct_genres:
+        movie["genres"] = movie["genres"].split(", ")
 
     return movie
 
@@ -125,7 +133,7 @@ def get_movie_from_id(movie_id, conn, ID=ID, COLUMNS_DATABASE=COLUMNS_DATABASE):
     return jsonify(movie_dict)
 
 
-def from_multiple_db_rows_to_dict(multiple_db_rows):
+def from_multiple_db_rows_to_dict(multiple_db_rows, ID=ID):
     """_summary_
         Get a multiple rows of the database as a list of tuple and return a corresponding dict object
     Args:
@@ -138,10 +146,8 @@ def from_multiple_db_rows_to_dict(multiple_db_rows):
     """
     all_movies = dict()
     all_movies["count"] = 0
-    ids = [movie[0] for movie in multiple_db_rows]
-    all_movies["movies"] = dict(
-        zip(ids, [from_db_row_to_dict(movie) for movie in multiple_db_rows])
-    )
+    movies_list = [from_db_row_to_dict(movie) for movie in multiple_db_rows]
+    all_movies["movies"] = dict(zip([movie[ID] for movie in movies_list], movies_list))
     all_movies["count"] = len(all_movies["movies"])
     return all_movies
 
