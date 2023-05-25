@@ -63,6 +63,8 @@
                 "vote_average": 0.0,
                 "vote_count": -9
             }
-        }
+        },
+        "existing_movie_id_to_delete": 949,
+        "non_existing_movie_id_to_delete": 0
     }
 }

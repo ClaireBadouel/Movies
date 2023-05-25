@@ -2,14 +2,7 @@ import os
 import json
 from flask import abort
 import datetime
-from flask import (
-    Blueprint,
-    g,
-    redirect,
-    render_template,
-    request,
-    jsonify,
-)
+from flask import Blueprint, g, redirect, render_template, request, jsonify, Response
 
 # CONFIG_FILE_PATH = ''
 # Load the config
@@ -234,7 +227,8 @@ def delete_movie_from_id(movie_id, conn):
     c = conn.cursor()
     c.execute("DELETE FROM movies WHERE id = ?", (movie_id,))
     conn.commit()
+    print(c.rowcount)
     if c.rowcount == 1:
-        return "", 204
+        return Response("", status=204)
     else:
         abort(404)
