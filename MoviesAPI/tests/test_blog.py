@@ -76,15 +76,32 @@ def test_POST_correct_format_movies(client, formdata_correct=formdata_correct):
 def test_multiple_POST_incorrect_format_movies(
     client, list_formdata_incorrect=list_formdata_incorrect
 ):
+    # the endpoint returns the expected response when the request is invalid
     for one_formdata_incorrect in list_formdata_incorrect:
         response = client.post("/movies", data=one_formdata_incorrect)
         assert response.status_code == 400
+
+    ######## Expected behavior for "/movies/<int:movie_id>", methods=("DELETE") ########
+
+    # Delete the movie with the given id. Return a 204 status code with an empty body.
+    # Return a 404 error if the movie is not found
+
+    ####################################################################################
 
 
 def test_DELETE_existing_movie(
     client, existing_movie_id_to_delete=existing_movie_id_to_delete
 ):
+    # the endpoint returns the expected response
+    # the endpoint returns the expected status code
     response = client.delete(f"/movies/{int(existing_movie_id_to_delete)}")
-    print(response.data)
     assert response.status_code == 204
     assert response.data == b""
+
+
+def test_DELETE_non_existing_movie(
+    client, existing_movie_id_to_delete=non_existing_movie_id_to_delete
+):
+    # the endpoint returns the expected response when the requested resource is not found
+    response = client.delete(f"/movies/{int(existing_movie_id_to_delete)}")
+    assert response.status_code == 404
