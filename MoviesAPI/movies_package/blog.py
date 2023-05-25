@@ -8,7 +8,7 @@ from flask import (
 )
 from werkzeug.exceptions import abort
 from movies_package.db import get_db
-from movies_package.utils import *
+import movies_package.utils as utils
 import datetime
 
 bp = Blueprint("blog", __name__)
@@ -33,37 +33,14 @@ bp = Blueprint("blog", __name__)
 @bp.route("/movies/<int:movie_id>", methods=("GET", "DELETE", "PUT"))
 def handle_movie(movie_id):
     if request.method == "GET":
-        """
-            Get a movie id (int) and return a corresponding JSON response object
-        Args:
-            movie_id (int): Id of a movie in the database
-
-        Returns:
-            JSON response object: corresponding json mapping database columns names
-            to the corresponding values in the movie
-        """
         with get_db() as conn:
             # res = get_movie_from_id(movie_id, conn)
-            return get_movie_from_id(movie_id, conn)
+            return utils.get_movie_from_id(movie_id, conn)
         # jsonify(res)
 
     if request.method == "DELETE":
-        """
-            Delete the movie corresponding to movie id in the database
-        Args:
-            movie_id (int): Id of a movie in the database
-
-        Returns:
-            HTTPException: 404 or 202 if the deletion fails
-        """
         with get_db() as conn:
-            c = conn.cursor()
-            c.execute("DELETE FROM movies WHERE id = ?", (movie_id,))
-            conn.commit()
-            if c.rowcount == 1:
-                return "", 204
-            else:
-                abort(404)
+            return utils.delete_movie_from_id(movie_id, conn)
 
     if request.method == "PUT":
         with get_db() as conn:
@@ -102,17 +79,17 @@ def handle_movie(movie_id):
 def create():
     if request.method == "POST":
         # get value from post
-        fields = get_fields_from_form(request.form)
+        fields = utils.get_fields_from_form(request.form)
 
-        if check_fields(fields):
-            fields = modify_gender_from_fields(fields)
+        if utils.check_fields(fields):
+            fields = utils.modify_gender_from_fields(fields)
 
             with get_db() as conn:
                 c = conn.cursor()
 
-                new_id = generate_new_id(conn)
+                new_id = utils.generate_new_id(conn)
 
-                fields = add_new_id_to_field(fields, new_id)
+                fields = utils.add_new_id_to_field(fields, new_id)
 
                 sql = """INSERT INTO movies 
                 (id, title, description, genres, release_date, vote_average, vote_count) 
@@ -139,7 +116,7 @@ def get_all_movies_with_word(search_term, COLUMNS_SEARCHED=["title", "descriptio
         # "SELECT "+", ".join([ID]+list(COLUMNS_DATABASE.keys())) +" FROM movies WHERE title like '%"+search_term+"%' AND description like '%"+search_term+"%';"
         sql_request = f"SELECT {', '.join([ID]+list(COLUMNS_DATABASE.keys())) } FROM movies WHERE title like '%{search_term}%' OR description like '%{search_term}%';"
         res = c.execute(sql_request).fetchall()
-    all_movies = from_multiple_db_rows_to_dict(res)
+    all_movies = utils.from_multiple_db_rows_to_dict(res)
     return jsonify(all_movies)
 
 
@@ -195,7 +172,7 @@ def api_filter():
                         } FROM movies ;"""
 
             res = c.execute(sql_request).fetchall()
-        all_movies = from_multiple_db_rows_to_dict(res)
+        all_movies = utils.from_multiple_db_rows_to_dict(res)
         return jsonify(all_movies)
         return sql_request
     else:

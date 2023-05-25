@@ -116,7 +116,9 @@ def get_movie_from_id(movie_id, conn, ID=ID, COLUMNS_DATABASE=COLUMNS_DATABASE):
                                             types , except the index columns). Defaults to COLUMNS_DATABASE.
 
     Returns:
-        dict : dict mapping database columns names to the corresponding values in the movie
+        json : json mapping database columns names to the corresponding values in the movie if possible else
+        HTTPException: 404
+
     """
     c = conn.cursor()
     sql_request = f"SELECT {', '.join([ID]+list(COLUMNS_DATABASE.keys()))} FROM movies WHERE {ID}==?"
@@ -217,3 +219,22 @@ def generate_new_id(conn):
     # new_id = max([elt for elt in ids if type(elt)==int ])+1
     new_id = int(max(ids) + 1)
     return new_id
+
+
+def delete_movie_from_id(movie_id, conn):
+    """
+        Delete the movie corresponding to movie id in the database
+        conn (sqlite3.Connection): sqlite3.Connection of the database
+    Args:
+        movie_id (int): Id of a movie in the database
+
+    Returns:
+        HTTPException: 404 or 202 if the deletion fails
+    """
+    c = conn.cursor()
+    c.execute("DELETE FROM movies WHERE id = ?", (movie_id,))
+    conn.commit()
+    if c.rowcount == 1:
+        return "", 204
+    else:
+        abort(404)
