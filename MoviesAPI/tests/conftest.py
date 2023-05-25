@@ -1,5 +1,5 @@
 import pytest
-from flaskr import create_app
+from movies_package import create_app
 
 
 @pytest.fixture

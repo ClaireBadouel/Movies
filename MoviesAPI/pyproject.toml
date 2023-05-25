@@ -1,5 +1,5 @@
 [project]
-name = "flaskr"
+name = "movies_package"
 version = "1.0.0"
 dependencies = [
     "flask",

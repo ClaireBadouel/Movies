@@ -40,11 +40,11 @@ pip install -e .
 Fill the MoviesAPI/config.
 
 ```bash
-flask --app flaskr init-db        
+flask --app movies_package init-db        
 ```
 Run the API
 ```bash
-flask --app flaskr run --debug    
+flask --app movies_package run --debug    
 ```
 
 # http://127.0.0.1:5000/movies/?genre=Comedy&after=2000-01-01&vote_average=6

@@ -7,8 +7,8 @@ from flask import (
     jsonify,
 )
 from werkzeug.exceptions import abort
-from flaskr.db import get_db
-from flaskr.utils import *
+from movies_package.db import get_db
+from movies_package.utils import *
 import datetime
 
 bp = Blueprint("blog", __name__)

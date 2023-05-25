@@ -4,7 +4,7 @@ from flask import abort
 
 # CONFIG_FILE_PATH = ''
 # Load the config
-with open(os.path.join("flaskr", "config.json"), "r") as config_file:
+with open(os.path.join("movies_package", "config.json"), "r") as config_file:
     config_data = json.load(config_file)
 
 # Set environment variable from the dict config_data['DATABASE']

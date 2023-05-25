@@ -1,5 +1,5 @@
 import pytest
-from flaskr.db import get_db
+from movies_package.db import get_db
 import json
 from html.parser import HTMLParser
 import datetime
