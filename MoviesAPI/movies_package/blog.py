@@ -142,3 +142,31 @@ def api_filter():
         return jsonify(all_movies)
     else:
         abort(404)
+
+
+@bp.get("/movies/search/")
+def api_filter_search():
+    query_parameters = request.args
+    like_request = []
+    if utils.is_filter_compliant(query_parameters):
+        is_forbidden_request, like_request = utils.get_like_request_from_query_param(
+            query_parameters
+        )
+        if is_forbidden_request:
+            abort(400)
+        else:
+            with get_db() as conn:
+                c = conn.cursor()
+                if len(like_request) > 0:
+                    sql_request = f"""SELECT {
+                                                ', '.join([ID]+list(COLUMNS_DATABASE.keys())) 
+                                            } FROM movies WHERE {
+                                                ' AND '.join(like_request)
+                                            };"""
+                else:
+                    abort(404)
+            res = c.execute(sql_request).fetchall()
+        all_movies = utils.from_multiple_db_rows_to_dict(res)
+        return jsonify(all_movies)
+    else:
+        abort(404)

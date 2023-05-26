@@ -29,6 +29,7 @@ def create_app(test_config=None):
         "/movies/<string:search_term>", "get_all_movies_with_word", methods=["GET"]
     )
     app.add_url_rule("/movies/", "api_filter", methods=["GET"])
+    app.add_url_rule("/movies/search/", "api_filter_search", methods=["GET"])
     app.add_url_rule(
         "/movies/search/<string:search_term>",
         "get_all_movies_with_word_search",
