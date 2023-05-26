@@ -11,65 +11,82 @@
     },
     "paths": {
         "/": {
-            "get": {}
-        },
-        "/movies": {
-            "get": {},
-            "post": {
-                "summary": "Create a Movie with a new movie_id and returns a movie by movie_id",
-                "requestBody": {
-                    "description": "The body of the request must be a JSON object representing the movie to create. The id field must not be set in the request body",
-                    "required": "true",
-                    "content": {
-                        "application/json": {}
-                    }
-                },
-                "responses": {
-                    "200": {
-                        "description": "A JSON of the created movie",
-                        "content": {
-                            "application/json": {}
-                        }
-                    },
-                    "400": {
-                        "description": "Not Found"
-                    }
-                }
-            }
-        },
-        "/movies/": {
-            "get": {}
-        },
-        "/movies/<int:movie_id>": {
             "get": {
-                "summary": "Returns a movie by movie_id",
-                "parameters": {
-                    "name": "movie_id",
-                    "in": "path",
-                    "description": "Movie ID",
-                    "required": true,
-                    "schema": {
-                        "type": "integer",
-                        "format": "int64"
-                    }
-                },
                 "responses": {
                     "200": {
-                        "description": "A JSON of the movie",
+                        "description": "A JSON containing the doc",
                         "content": {
                             "application/json": {}
                         }
-                    },
-                    "400": {
-                        "description": "Not Found"
                     }
                 }
             },
-            "delete": {},
-            "put": {}
-        },
-        "/movies/<string:search_term>": {
-            "get": {}
+            "/movies": {
+                "get": {
+                    "responses": {
+                        "200": {
+                            "description": "A form to create a movie",
+                            "content": {
+                                "text/html": {}
+                            }
+                        }
+                    }
+                },
+                "post": {
+                    "summary": "Create a Movie with a new movie_id and returns a movie by movie_id",
+                    "requestBody": {
+                        "description": "The body of the request must be a JSON object representing the movie to create. The id field must not be set in the request body",
+                        "required": "true",
+                        "content": {
+                            "application/json": {}
+                        }
+                    },
+                    "responses": {
+                        "200": {
+                            "description": "A JSON of the created movie",
+                            "content": {
+                                "application/json": {}
+                            }
+                        },
+                        "400": {
+                            "description": "Not Found"
+                        }
+                    }
+                }
+            },
+            "/movies/": {
+                "get": {}
+            },
+            "/movies/<int:movie_id>": {
+                "get": {
+                    "summary": "Returns a movie by movie_id",
+                    "parameters": {
+                        "name": "movie_id",
+                        "in": "path",
+                        "description": "Movie ID",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "format": "int64"
+                        }
+                    },
+                    "responses": {
+                        "200": {
+                            "description": "A JSON of the movie",
+                            "content": {
+                                "application/json": {}
+                            }
+                        },
+                        "400": {
+                            "description": "Not Found"
+                        }
+                    }
+                },
+                "delete": {},
+                "put": {}
+            },
+            "/movies/<string:search_term>": {
+                "get": {}
+            }
         }
     }
-}

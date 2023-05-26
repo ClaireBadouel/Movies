@@ -28,6 +28,7 @@ Create the virtual environment:
 ```bash
 py -m pip install --user virtualenv
 py -m venv env
+Set-ExecutionPolicy Unrestricted -Scope Process
 .\env\Scripts\activate
 ```
 
