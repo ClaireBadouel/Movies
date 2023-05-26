@@ -101,6 +101,18 @@ def get_all_movies_with_word(search_term, COLUMNS_SEARCHED=["title", "descriptio
     return jsonify(all_movies)
 
 
+@bp.get("/movies/search/<string:search_term>")
+def get_all_movies_with_word_search(
+    search_term, COLUMNS_SEARCHED=["title", "description"]
+):
+    with get_db() as conn:
+        c = conn.cursor()
+        sql_request = f"SELECT {', '.join([ID]+list(COLUMNS_DATABASE.keys())) } FROM movies WHERE title like '%{search_term}%' OR description like '%{search_term}%';"
+        res = c.execute(sql_request).fetchall()
+    all_movies = utils.from_multiple_db_rows_to_dict(res)
+    return jsonify(all_movies)
+
+
 @bp.get("/movies/")
 def api_filter():
     query_parameters = request.args
