@@ -33,19 +33,6 @@ def from_db_row_to_dict(db_row, ID=ID, COLUMNS_DATABASE=COLUMNS_DATABASE):
     return res
 
 
-"""def get_movie_from_id_as_dict(movie_id, conn, ID=ID, COLUMNS_DATABASE=COLUMNS_DATABASE):
-    c = conn.cursor()
-    sql_request = f"SELECT {', '.join([ID]+list(COLUMNS_DATABASE.keys()))} FROM movies WHERE {ID}==?"
-    #'SELECT '+', '.join([ID]+list(COLUMNS_DATABASE.keys())) +' FROM movies WHERE '+ID+'==?'
-    res = c.execute(sql_request, (movie_id,)).fetchall()
-
-    if len(res) != 1:
-        abort(404)
-    else:
-        movie_dict = from_db_row_to_dict(res[0])
-    return movie_dict"""
-
-
 def from_db_row_to_dict(
     db_row, ID=ID, ID_type=ID_type, COLUMNS_DATABASE=COLUMNS_DATABASE
 ):

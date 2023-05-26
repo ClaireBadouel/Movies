@@ -1,8 +1,75 @@
 {
-    "openapi": "3.0.0",
+    "Flask": "2.3.2",
     "info": {
-        "title": "",
-        "description": "Optional multiline or single-line description in [CommonMark](http://commonmark.org/help/) or HTML.",
-        "version": ""
+        "title": "MovieAPI",
+        "description": "The goal of this project is to create a REST API to manage movies. The API must be built with Python, and (recommended) any framework of your choice. The project must include a database to store the movies and reviews. The API must be able to:  • Create, update, delete, and get movies  • Get a list of movies  • Search for movies by keywords in the title or description • For the list and search endpoints: filter by genre, date, and rating.",
+        "version": "1.0.0"
+    },
+    "servers": {
+        "url": "http://127.0.0.1:5000",
+        "description": " Main server"
+    },
+    "paths": {
+        "/": {
+            "get": {}
+        },
+        "/movies": {
+            "get": {},
+            "post": {
+                "summary": "Create a Movie with a new movie_id and returns a movie by movie_id",
+                "requestBody": {
+                    "description": "The body of the request must be a JSON object representing the movie to create. The id field must not be set in the request body",
+                    "required": "true",
+                    "content": {
+                        "application/json": {}
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "A JSON of the created movie",
+                        "content": {
+                            "application/json": {}
+                        }
+                    },
+                    "400": {
+                        "description": "Not Found"
+                    }
+                }
+            }
+        },
+        "/movies/": {
+            "get": {}
+        },
+        "/movies/<int:movie_id>": {
+            "get": {
+                "summary": "Returns a movie by movie_id",
+                "parameters": {
+                    "name": "movie_id",
+                    "in": "path",
+                    "description": "Movie ID",
+                    "required": true,
+                    "schema": {
+                        "type": "integer",
+                        "format": "int64"
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "A JSON of the movie",
+                        "content": {
+                            "application/json": {}
+                        }
+                    },
+                    "400": {
+                        "description": "Not Found"
+                    }
+                }
+            },
+            "delete": {},
+            "put": {}
+        },
+        "/movies/<string:search_term>": {
+            "get": {}
+        }
     }
 }
